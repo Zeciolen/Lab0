@@ -278,10 +278,12 @@ namespace TicTacToe
 
         private void newGameButton_Click(object sender, EventArgs e)
         {
+            Application.Restart();
         }
 
         private void exitButton_Click(object sender, EventArgs e)
         {
+            Application.Exit();
         }
     }
 }
