@@ -33,6 +33,10 @@ namespace TicTacToe
         const int COLUMN = 2;
         const int DIAGONAL = 3;
 
+        //My variables
+        int player = 1;
+        Random rand = new Random();
+
         // This method takes a row and column as parameters and 
         // returns a reference to a label on the form in that position
         private Label GetSquare(int row, int column)
@@ -70,17 +74,75 @@ namespace TicTacToe
         //* TODO:  finish all of these that return true
         private bool IsAnyRowWinner()
         {
-            return true;
+            int pTotal = 0;
+            int cTotal = 0;
+            Label testSquare;
+
+            for(int i = 0; i < SIZE; i++)
+            {
+                for(int j = 0; j < SIZE; j++)
+                {
+                    testSquare = GetSquare(i, j);
+
+                    if (testSquare.Text == USER_SYMBOL)
+                        pTotal++;
+                    else if (testSquare.Text == COMPUTER_SYMBOL)
+                        cTotal++;
+                }
+
+                if (pTotal >= 5 || cTotal >= 5)
+                    return true;
+                else
+                {
+                    pTotal = 0;
+                    cTotal = 0;
+                }
+            }
+            return false;
         }
 
         private bool IsColumnWinner(int col)
         {
+            Label testSquare = GetSquare(0, col);
+            string symbol = testSquare.Text;
+
+            for (int i = 0; i < SIZE; i++)
+            {
+                testSquare = GetSquare(i, col);
+
+                if (symbol == EMPTY || testSquare.Text != symbol)
+                    return false;
+            }
             return true;
         }
 
         private bool IsAnyColumnWinner()
         {
-            return true;
+            int pTotal = 0;
+            int cTotal = 0;
+            Label testSquare;
+
+            for (int i = 0; i < SIZE; i++)
+            {
+                for (int j = 0; j < SIZE; j++)
+                {
+                    testSquare = GetSquare(j, i);
+
+                    if (testSquare.Text == USER_SYMBOL)
+                        pTotal++;
+                    else if (testSquare.Text == COMPUTER_SYMBOL)
+                        cTotal++;
+                }
+
+                if (pTotal >= 5 || cTotal >= 5)
+                    return true;
+                else
+                {
+                    pTotal = 0;
+                    cTotal = 0;
+                }
+            }
+            return false;
         }
 
         private bool IsDiagonal1Winner()
@@ -108,6 +170,16 @@ namespace TicTacToe
 
         private bool IsFull()
         {
+            for(int i = 0; i < SIZE; i++)
+            {
+                for(int j = 0; j < SIZE; j++)
+                {
+                    Label testSquare = GetSquare(i, j);
+                    if (testSquare.Text == USER_SYMBOL || testSquare.Text == COMPUTER_SYMBOL)
+                        return false;
+                }
+            }
+            Application.Exit();
             return true;
         }
 
@@ -192,7 +264,6 @@ namespace TicTacToe
                 HighlightDiagonal1();
             else
                 HighlightDiagonal2();
-
         }
 
         //* TODO:  finish these 2
@@ -229,6 +300,22 @@ namespace TicTacToe
 
         private void MakeComputerMove()
         {
+            Label compSquare = null;
+
+            while(true)
+            {
+                int row = rand.Next(5);
+                int col = rand.Next(5);
+                compSquare = GetSquare(row, col);
+                if (compSquare.Text != USER_SYMBOL && compSquare.Text != COMPUTER_SYMBOL)
+                    break;
+            }
+
+            if (!IsFull())
+            {
+                compSquare.Text = COMPUTER_SYMBOL;
+                DisableSquare(compSquare);
+            }
         }
 
         // Setting the enabled property changes the look and feel of the cell.
@@ -269,11 +356,31 @@ namespace TicTacToe
         //* TODO:  finish the event handlers
         private void label_Click(object sender, EventArgs e)
         {
+            
             int winningDimension = NONE;
             int winningValue = NONE;
 
             Label clickedLabel = (Label)sender;
+            if(clickedLabel != null)
+            {
+               if(player == 1)
+                {
+                    clickedLabel.Text = USER_SYMBOL;
+                    DisableSquare(clickedLabel);
+                    player = 2;
+                }
+            }
 
+            if(!IsFull())
+            {
+                MakeComputerMove();
+                player = 1;
+            }
+
+            if(IsWinner(out winningDimension, out winningValue))
+            {
+
+            }
         }
 
         private void newGameButton_Click(object sender, EventArgs e)
