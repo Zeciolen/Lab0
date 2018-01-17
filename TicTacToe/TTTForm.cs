@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace TicTacToe
 {
@@ -74,7 +75,7 @@ namespace TicTacToe
         //* TODO:  finish all of these that return true
         private bool IsAnyRowWinner()
         {
-            int pTotal = 0;
+            /*int pTotal = 0;
             int cTotal = 0;
             Label testSquare;
 
@@ -98,6 +99,13 @@ namespace TicTacToe
                     cTotal = 0;
                 }
             }
+            return false;*/
+
+            for (int i = 0; i < SIZE; i++)
+            {
+                if (IsRowWinner(i))
+                    return true;
+            }
             return false;
         }
 
@@ -118,7 +126,7 @@ namespace TicTacToe
 
         private bool IsAnyColumnWinner()
         {
-            int pTotal = 0;
+            /*int pTotal = 0;
             int cTotal = 0;
             Label testSquare;
 
@@ -142,12 +150,14 @@ namespace TicTacToe
                     cTotal = 0;
                 }
             }
-            return false;
-        }
+            return false;*/
 
-        private bool IsDiagonal1Winner()
-        {
-            return true;
+            for(int i = 0; i < SIZE; i++)
+            {
+                if (IsColumnWinner(i))
+                    return true;
+            }
+            return false;
         }
 
         private bool IsDiagonal2Winner()
@@ -163,9 +173,28 @@ namespace TicTacToe
             return true;
         }
 
+        private bool IsDiagonal1Winner()
+        {
+            Label square = GetSquare(0, 0);
+            string symbol = square.Text;
+            for (int row = 1, col = 1; row < SIZE; row++, col++)
+            {
+                square = GetSquare(row, col);
+                if (symbol == EMPTY || square.Text != symbol)
+                    return false;
+            }
+            return true;
+        }
+
         private bool IsAnyDiagonalWinner()
         {
-            return true;
+            if (IsDiagonal1Winner())
+                return true;
+            else if (IsDiagonal2Winner())
+                return true;
+            else
+                return false;
+
         }
 
         private bool IsFull()
@@ -175,11 +204,10 @@ namespace TicTacToe
                 for(int j = 0; j < SIZE; j++)
                 {
                     Label testSquare = GetSquare(i, j);
-                    if (testSquare.Text == USER_SYMBOL || testSquare.Text == COMPUTER_SYMBOL)
+                    if (testSquare.Text == EMPTY)
                         return false;
                 }
             }
-            Application.Exit();
             return true;
         }
 
@@ -195,6 +223,7 @@ namespace TicTacToe
                 {
                     whichDimension = ROW;
                     whichOne = row;
+                    Debug.Print("Row");
                     return true;
                 }
             }
@@ -205,6 +234,7 @@ namespace TicTacToe
                 {
                     whichDimension = COLUMN;
                     whichOne = column;
+                    Debug.Print("Column");
                     return true;
                 }
             }
@@ -213,16 +243,19 @@ namespace TicTacToe
             {
                 whichDimension = DIAGONAL;
                 whichOne = TOP_LEFT_TO_BOTTOM_RIGHT;
+                Debug.Print("Diagonal1");
                 return true;
             }
             if (IsDiagonal2Winner())
             {
                 whichDimension = DIAGONAL;
                 whichOne = TOP_RIGHT_TO_BOTTOM_LEFT;
+                Debug.Print("Diagonal2");
                 return true;
             }
             whichDimension = NONE;
             whichOne = NONE;
+            Debug.Print("No Win");
             return false;
         }
 
@@ -269,26 +302,40 @@ namespace TicTacToe
         //* TODO:  finish these 2
         private void HighlightRow(int row)
         {
+            for (int col = 0; col < SIZE; col++)
+            {
+                Label square = GetSquare(row, col);
+                square.Enabled = true;
+                square.ForeColor = Color.Red;
+            }
         }
 
         private void HighlightDiagonal1()
         {
+            for (int row = 0, col = 0; row < SIZE; row++, col++)
+            {
+                Label square = GetSquare(row, col);
+                square.Enabled = true;
+                square.ForeColor = Color.Red;
+            }
         }
 
         //* TODO:  finish this
-        private void HighlightWinner(string player, int winningDimension, int winningValue)
+        private void HighlightWinner(int player, int winningDimension, int winningValue)
         {
             switch (winningDimension)
             {
                 case ROW:
-
+                    HighlightRow(winningValue);
+                    resultLabel.Text = ("Player " + player + " wins!");
                     break;
                 case COLUMN:
-
+                    HighlightColumn(winningValue);
+                    resultLabel.Text = ("Player " + player + " wins!");
                     break;
                 case DIAGONAL:
                     HighlightDiagonal(winningValue);
-                    resultLabel.Text = (player + " wins!");
+                    resultLabel.Text = ("Player " + player + " wins!");
                     break;
             }
         }
@@ -296,6 +343,7 @@ namespace TicTacToe
         //* TODO:  finish these 2
         private void ResetSquares()
         {
+            //Found a different way to solve this problem "Application.Restart()"
         }
 
         private void MakeComputerMove()
@@ -367,20 +415,36 @@ namespace TicTacToe
                 {
                     clickedLabel.Text = USER_SYMBOL;
                     DisableSquare(clickedLabel);
-                    player = 2;
                 }
             }
 
-            if(!IsFull())
+            if (IsWinner(out winningDimension, out winningValue))
+            {
+                HighlightWinner(player, winningDimension, winningValue);
+                DisableAllSquares();
+                return;
+            }
+            else
+                player = 2;
+
+            if (!IsFull())
             {
                 MakeComputerMove();
-                player = 1;
             }
-
-            if(IsWinner(out winningDimension, out winningValue))
+            else
             {
-
+                resultLabel.Text = ("It's a Tie. No one wins!");
+                return;
             }
+
+            if (IsWinner(out winningDimension, out winningValue))
+            {
+                HighlightWinner(player, winningDimension, winningValue);
+                DisableAllSquares();
+                return;
+            }
+            else
+                player = 1;
         }
 
         private void newGameButton_Click(object sender, EventArgs e)
