@@ -241,11 +241,14 @@ namespace Memory
             }
             else
             {
+                Debug.Print("Second Card");
                 secondCardNumber = cardNumber;
                 ShowCard(cardNumber);
                 //DisableAllCards();
-                flipTimer_Tick(sender, e);
             }
+
+            //if(firstCardNumber != NOT_PICKED_YET && secondCardNumber != NOT_PICKED_YET)
+                //flipTimer_Tick(sender, e);
         }
 
         private void flipTimer_Tick(object sender, EventArgs e)
@@ -271,6 +274,32 @@ namespace Memory
              *      enable all of the cards left on the board
              * end if
              */
+
+            System.Threading.Thread.Sleep(1000);
+            if (IsMatch(firstCardNumber, secondCardNumber))
+            {
+                matches++;
+                HideCard(firstCardNumber);
+                HideCard(secondCardNumber);
+                firstCardNumber = NOT_PICKED_YET;
+                secondCardNumber = NOT_PICKED_YET;
+                if(matches == 10)
+                {
+
+                }
+                else
+                {
+                    EnableAllVisibleCards();
+                }
+            }
+            else
+            {
+                LoadCardBack(firstCardNumber);
+                LoadCardBack(secondCardNumber);
+                firstCardNumber = NOT_PICKED_YET;
+                secondCardNumber = NOT_PICKED_YET;
+                EnableAllVisibleCards();
+            }
         }
         #endregion
     }
