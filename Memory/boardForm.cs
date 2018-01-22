@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace Memory
 {
@@ -68,7 +69,10 @@ namespace Memory
         // TODO:  students should write this one
         private bool IsMatch(int index1, int index2)
         {
-            return true;
+            if (GetCardValue(index1) == GetCardValue(index2))
+                return true;
+            else
+                return false;
         }
 
         // This method fills each picture box with a filename
@@ -86,11 +90,25 @@ namespace Memory
                     i++;
                 }
             }
+            Debug.Print("Cards filled");
         }
 
         // TODO:  students should write this one
         private void ShuffleCards()
         {
+            PictureBox temp;
+            Random rand = new Random();
+            int trade;
+
+            for (int i = 1; i <= 20; i++)
+            {
+                temp = GetCard(i);
+                trade = rand.Next(1, 20);
+                SetCardFilename(i, GetCardFilename(trade));
+                SetCardFilename(trade, temp.Tag.ToString());
+                Debug.Print(i.ToString());
+            }
+            Debug.Print("Deck Shuffled");
         }
 
         // This method loads (shows) an image in a picture box.  Assumes that filenames
@@ -112,55 +130,72 @@ namespace Memory
         // shows (loads) the backs of all of the cards
         private void LoadAllCardBacks()
         {
+            PictureBox card;
 
+            for(int i = 1; i <= 20; i++)
+            {
+                card = GetCard(i);
+                card.Image = Image.FromFile(System.Environment.CurrentDirectory + "\\Cards\\black_back.jpg");
+            }
         }
 
         // Hides a picture box
         private void HideCard(int i)
         {
-
+            GetCard(i).Visible = false;
         }
 
         private void HideAllCards()
         {
-
+            for (int i = 1; i <= 20; i++)
+                HideCard(i);
         }
 
         // shows a picture box
         private void ShowCard(int i)
         {
-
+            PictureBox card = GetCard(i);
+            card.Image = Image.FromFile(System.Environment.CurrentDirectory + "\\Cards\\" + card.Tag.ToString());
         }
 
         private void ShowAllCards()
         {
-
+            for(int i = 1; i <= 20; i++)
+            {
+                ShowCard(i);
+            }
         }
 
         // disables a picture box
         private void DisableCard(int i)
         {
-
+            GetCard(i).Enabled = false;
         }
 
         private void DisableAllCards()
         {
-
+            for (int i = 1; i <= 20; i++)
+                DisableCard(i);
         }
 
         private void EnableCard(int i)
         {
-
+            GetCard(i).Enabled = true;
         }
 
         private void EnableAllCards()
         {
-
+            for (int i = 1; i <= 20; i++)
+                EnableCard(i);
         }
     
         private void EnableAllVisibleCards()
         {
-
+            for(int i = 1; i <= 20; i++)
+            {
+                if (GetCard(i).Visible == true)
+                    EnableCard(i);
+            }
         }
 
         #endregion
@@ -176,6 +211,9 @@ namespace Memory
              *      to make sure that the cards are loaded successfully and that
              *      they're shuffled.  If you get all 2s, something is wrong.
             */
+            FillCardFilenames();
+            ShuffleCards();
+            LoadAllCardBacks();
         }
 
         private void card_Click(object sender, EventArgs e)
@@ -195,6 +233,19 @@ namespace Memory
              *      start the flip timer
              *  end if
             */
+            if(firstCardNumber == NOT_PICKED_YET)
+            {
+                firstCardNumber = cardNumber;
+                ShowCard(cardNumber);
+                DisableCard(cardNumber);
+            }
+            else
+            {
+                secondCardNumber = cardNumber;
+                ShowCard(cardNumber);
+                //DisableAllCards();
+                flipTimer_Tick(sender, e);
+            }
         }
 
         private void flipTimer_Tick(object sender, EventArgs e)

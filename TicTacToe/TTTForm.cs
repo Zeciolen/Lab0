@@ -75,32 +75,6 @@ namespace TicTacToe
         //* TODO:  finish all of these that return true
         private bool IsAnyRowWinner()
         {
-            /*int pTotal = 0;
-            int cTotal = 0;
-            Label testSquare;
-
-            for(int i = 0; i < SIZE; i++)
-            {
-                for(int j = 0; j < SIZE; j++)
-                {
-                    testSquare = GetSquare(i, j);
-
-                    if (testSquare.Text == USER_SYMBOL)
-                        pTotal++;
-                    else if (testSquare.Text == COMPUTER_SYMBOL)
-                        cTotal++;
-                }
-
-                if (pTotal >= 5 || cTotal >= 5)
-                    return true;
-                else
-                {
-                    pTotal = 0;
-                    cTotal = 0;
-                }
-            }
-            return false;*/
-
             for (int i = 0; i < SIZE; i++)
             {
                 if (IsRowWinner(i))
@@ -126,32 +100,6 @@ namespace TicTacToe
 
         private bool IsAnyColumnWinner()
         {
-            /*int pTotal = 0;
-            int cTotal = 0;
-            Label testSquare;
-
-            for (int i = 0; i < SIZE; i++)
-            {
-                for (int j = 0; j < SIZE; j++)
-                {
-                    testSquare = GetSquare(j, i);
-
-                    if (testSquare.Text == USER_SYMBOL)
-                        pTotal++;
-                    else if (testSquare.Text == COMPUTER_SYMBOL)
-                        cTotal++;
-                }
-
-                if (pTotal >= 5 || cTotal >= 5)
-                    return true;
-                else
-                {
-                    pTotal = 0;
-                    cTotal = 0;
-                }
-            }
-            return false;*/
-
             for(int i = 0; i < SIZE; i++)
             {
                 if (IsColumnWinner(i))
