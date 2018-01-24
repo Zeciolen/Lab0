@@ -375,7 +375,7 @@ namespace TicTacToe
             else
                 player = 2;
 
-            if (!IsFull())
+            if (!IsFull() && player == 2)
             {
                 MakeComputerMove();
             }

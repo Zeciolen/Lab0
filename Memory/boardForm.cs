@@ -96,17 +96,16 @@ namespace Memory
         // TODO:  students should write this one
         private void ShuffleCards()
         {
-            PictureBox temp;
+            string temp;
             Random rand = new Random();
             int trade;
 
             for (int i = 1; i <= 20; i++)
             {
-                temp = GetCard(i);
-                trade = rand.Next(1, 20);
+                temp = GetCard(i).Tag.ToString();
+                trade = rand.Next(1, 21);
                 SetCardFilename(i, GetCardFilename(trade));
-                SetCardFilename(trade, temp.Tag.ToString());
-                Debug.Print(i.ToString());
+                SetCardFilename(trade, temp);
             }
             Debug.Print("Deck Shuffled");
         }
@@ -213,6 +212,7 @@ namespace Memory
             */
             FillCardFilenames();
             ShuffleCards();
+            //ShowAllCards();
             LoadAllCardBacks();
         }
 
@@ -244,11 +244,11 @@ namespace Memory
                 Debug.Print("Second Card");
                 secondCardNumber = cardNumber;
                 ShowCard(cardNumber);
-                //DisableAllCards();
+                DisableAllCards();
             }
 
-            //if(firstCardNumber != NOT_PICKED_YET && secondCardNumber != NOT_PICKED_YET)
-                //flipTimer_Tick(sender, e);
+            if (firstCardNumber != NOT_PICKED_YET && secondCardNumber != NOT_PICKED_YET)
+                flipTimer.Enabled = true;
         }
 
         private void flipTimer_Tick(object sender, EventArgs e)
@@ -274,8 +274,7 @@ namespace Memory
              *      enable all of the cards left on the board
              * end if
              */
-
-            System.Threading.Thread.Sleep(1000);
+             
             if (IsMatch(firstCardNumber, secondCardNumber))
             {
                 matches++;
@@ -285,11 +284,12 @@ namespace Memory
                 secondCardNumber = NOT_PICKED_YET;
                 if(matches == 10)
                 {
-
+                    MessageBox.Show("All matches found!", "You Win");
                 }
                 else
                 {
                     EnableAllVisibleCards();
+                    flipTimer.Enabled = false;
                 }
             }
             else
@@ -299,6 +299,7 @@ namespace Memory
                 firstCardNumber = NOT_PICKED_YET;
                 secondCardNumber = NOT_PICKED_YET;
                 EnableAllVisibleCards();
+                flipTimer.Enabled = false;
             }
         }
         #endregion
